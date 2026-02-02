@@ -1,7 +1,7 @@
 // Audio Manager - Synthesized sounds via Web Audio API
 let audioContext = null;
 let isMuted = false;
-let isInitialized = false;
+let startupPlayed = false;
 
 function getAudioContext() {
   if (!audioContext) {
@@ -10,36 +10,25 @@ function getAudioContext() {
   return audioContext;
 }
 
-// Initialize audio on first user interaction
-function initAudio() {
-  if (isInitialized) return;
-
+async function ensureAudioReady() {
   const ctx = getAudioContext();
   if (ctx.state === 'suspended') {
-    ctx.resume();
+    await ctx.resume();
   }
-  isInitialized = true;
+  return ctx;
 }
 
-// Set up listener for first user interaction
-if (typeof document !== 'undefined') {
-  const initOnInteraction = () => {
-    initAudio();
-    document.removeEventListener('click', initOnInteraction);
-    document.removeEventListener('keydown', initOnInteraction);
-  };
-  document.addEventListener('click', initOnInteraction);
-  document.addEventListener('keydown', initOnInteraction);
-}
-
-export function playClick() {
+export async function playClick() {
   if (isMuted) return;
 
   try {
-    const ctx = getAudioContext();
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-      return;
+    const ctx = await ensureAudioReady();
+
+    // Play startup sound on first interaction
+    if (!startupPlayed) {
+      startupPlayed = true;
+      doPlayStartup(ctx);
+      return; // Skip click sound, startup is enough
     }
 
     const oscillator = ctx.createOscillator();
@@ -48,7 +37,7 @@ export function playClick() {
     oscillator.type = 'square';
     oscillator.frequency.setValueAtTime(800, ctx.currentTime);
 
-    gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+    gainNode.gain.setValueAtTime(0.2, ctx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
 
     oscillator.connect(gainNode);
@@ -57,47 +46,47 @@ export function playClick() {
     oscillator.start(ctx.currentTime);
     oscillator.stop(ctx.currentTime + 0.06);
   } catch (e) {
-    // Audio not supported or blocked
+    console.log('Audio error:', e);
   }
 }
 
-export function playStartup() {
-  if (isMuted) return;
+function doPlayStartup(ctx) {
+  // Windows 98-style startup chime
+  const notes = [
+    { freq: 523.25, start: 0, duration: 0.5 },
+    { freq: 659.25, start: 0.1, duration: 0.5 },
+    { freq: 783.99, start: 0.2, duration: 0.5 },
+    { freq: 1046.50, start: 0.3, duration: 0.6 },
+  ];
+
+  notes.forEach(note => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(note.freq, ctx.currentTime + note.start);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime + note.start);
+    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + note.start + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + note.start + note.duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(ctx.currentTime + note.start);
+    osc.stop(ctx.currentTime + note.start + note.duration);
+  });
+}
+
+export async function playStartup() {
+  if (isMuted || startupPlayed) return;
 
   try {
-    const ctx = getAudioContext();
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-      return;
-    }
-
-    // Windows 98-style startup chime - ascending notes
-    const notes = [
-      { freq: 330, start: 0, duration: 0.15 },      // E4
-      { freq: 392, start: 0.12, duration: 0.15 },   // G4
-      { freq: 523, start: 0.24, duration: 0.15 },   // C5
-      { freq: 659, start: 0.36, duration: 0.3 },    // E5
-    ];
-
-    notes.forEach(note => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(note.freq, ctx.currentTime + note.start);
-
-      gain.gain.setValueAtTime(0, ctx.currentTime + note.start);
-      gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + note.start + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + note.start + note.duration);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.start(ctx.currentTime + note.start);
-      osc.stop(ctx.currentTime + note.start + note.duration);
-    });
+    const ctx = await ensureAudioReady();
+    startupPlayed = true;
+    doPlayStartup(ctx);
   } catch (e) {
-    // Audio not supported or blocked
+    console.log('Audio error:', e);
   }
 }
 

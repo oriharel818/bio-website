@@ -1,4 +1,6 @@
 // oriOS Boot Screen
+import { playStartup } from '../utils/audioManager.js';
+
 export function createBootScreen(onComplete) {
   const bootScreen = document.getElementById('boot-screen');
 
@@ -45,7 +47,7 @@ export function createBootScreen(onComplete) {
       clearInterval(progressInterval);
 
       // Play startup sound and fade out
-      playStartupSound();
+      playStartup();
 
       setTimeout(() => {
         bootScreen.classList.remove('active');
@@ -60,38 +62,3 @@ export function createBootScreen(onComplete) {
   }, 100);
 }
 
-function playStartupSound() {
-  // oriOS startup sound - using Web Audio API
-  try {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-    // Create a modern startup chord
-    const notes = [
-      { freq: 523.25, start: 0, duration: 0.5 },      // C5
-      { freq: 659.25, start: 0.1, duration: 0.5 },    // E5
-      { freq: 783.99, start: 0.2, duration: 0.5 },    // G5
-      { freq: 1046.50, start: 0.3, duration: 0.6 },   // C6
-    ];
-
-    notes.forEach(note => {
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.type = 'sine';
-      oscillator.frequency.value = note.freq;
-
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime + note.start);
-      gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + note.start + 0.05);
-      gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + note.start + note.duration);
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      oscillator.start(audioContext.currentTime + note.start);
-      oscillator.stop(audioContext.currentTime + note.start + note.duration);
-    });
-  } catch (e) {
-    // Audio not supported, continue silently
-    console.log('Audio not available');
-  }
-}
