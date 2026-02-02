@@ -25,53 +25,41 @@ export function createBootScreen(onComplete) {
         </div>
       </div>
       <div class="boot-copyright">
-        <p class="click-to-start">Click anywhere to start</p>
+        <p>Starting up...</p>
       </div>
     </div>
   `;
 
   bootScreen.classList.add('active');
 
-  // Wait for click to start boot sequence
-  const startBoot = async () => {
-    bootScreen.removeEventListener('click', startBoot);
+  // Animate progress blocks
+  const progressBlocks = bootScreen.querySelector('.progress-blocks');
+  let blockCount = 0;
+  const maxBlocks = 20;
 
-    // Initialize audio on user gesture
-    await initAudio();
+  const progressInterval = setInterval(() => {
+    if (blockCount < maxBlocks) {
+      const block = document.createElement('div');
+      block.className = 'progress-block';
+      progressBlocks.appendChild(block);
+      blockCount++;
+    } else {
+      clearInterval(progressInterval);
 
-    // Update text
-    const clickText = bootScreen.querySelector('.click-to-start');
-    if (clickText) clickText.textContent = 'Starting up...';
-
-    // Animate progress blocks
-    const progressBlocks = bootScreen.querySelector('.progress-blocks');
-    let blockCount = 0;
-    const maxBlocks = 20;
-
-    const progressInterval = setInterval(() => {
-      if (blockCount < maxBlocks) {
-        const block = document.createElement('div');
-        block.className = 'progress-block';
-        progressBlocks.appendChild(block);
-        blockCount++;
-      } else {
-        clearInterval(progressInterval);
-
-        // Play startup sound after loading completes
+      // Try to play startup sound (may not work without prior user interaction)
+      initAudio().then(() => {
         playStartup();
+      });
+
+      setTimeout(() => {
+        bootScreen.classList.remove('active');
+        bootScreen.classList.add('fade-out');
 
         setTimeout(() => {
-          bootScreen.classList.remove('active');
-          bootScreen.classList.add('fade-out');
-
-          setTimeout(() => {
-            bootScreen.style.display = 'none';
-            if (onComplete) onComplete();
-          }, 500);
-        }, 800);
-      }
-    }, 100);
-  };
-
-  bootScreen.addEventListener('click', startBoot);
+          bootScreen.style.display = 'none';
+          if (onComplete) onComplete();
+        }, 500);
+      }, 800);
+    }
+  }, 100);
 }
