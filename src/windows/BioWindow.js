@@ -7,11 +7,12 @@ let hasBeenReadLongEnough = false;
 let hasUnsavedChanges = false;
 
 const bioHTML = `<p>I'm Ori.</p>
-<p>I built One Shot Productions into the definitive production company for luxury real estate. If you've seen it on Selling Sunset or Million Dollar Listing, we likely filmed it. From The Oppenheim Group to Ryan Serhant, including shooting "The One" listed at $500M and projects with Mr Beast, we've covered over $50 Billion in property value.</p>
-<p>I spun that expertise into <a href="#" class="company-link" data-company="lumara">Lumara Media</a> to serve institutional giants like Blackstone, Disney, and Netflix. I also took some big early swings at VR activations and 3D digital twins. They didn't all land, but they taught me exactly where the tech was lagging behind the market demand.</p>
-<p>After thousands of productions, I realized that high-end video is the ultimate leverage for agents. It provides disproportionate access to more buyers faster than any other tool.</p>
-<p><strong>The Problem:</strong> The "pro" look currently requires an expensive onsite production crew and a manual editing bottleneck. This makes it impossible for the average agent to use on every listing.</p>
-<p>I'm building <a href="#" class="company-link" data-company="reele">Reel-E.ai</a> to solve this. We aren't building a shallow wrapper; we own our AI inference stack to codify a decade of production expertise into a scalable engine. We deliver the same polished property videos used by the pros, but made instant and affordable for everyone.</p>
+<p>I spent a decade building One Shot Productions into the go-to production company for luxury real estate and institutional clients. Selling Sunset, Million Dollar Listing, The Oppenheim Group, Ryan Serhant, "The One" at $500M, projects with Mr Beast. Over $50B in property value filmed.</p>
+<p>I expanded into institutional work through <a href="#" class="company-link" data-company="lumara">Lumara Media</a>, serving Blackstone, Fortress, Disney, and Netflix on corporate communications, investor relations, and portfolio marketing.</p>
+<p>After thousands of productions, the pattern was clear: high-quality video is the highest-leverage marketing tool in real estate. But the current model doesn't scale. It requires expensive crews, manual editing, and long turnarounds. That's fine for a $50M listing. It doesn't work when you're trying to cover every unit in a 10,000-property portfolio.</p>
+<p>So I built <a href="#" class="company-link" data-company="reele">Reel-E.ai</a>.</p>
+<p>We own our inference stack. No wrappers, no API dependencies. We codified a decade of production expertise into a purpose-built engine that delivers pro-quality property videos instantly and at a fraction of the cost.</p>
+<p>We launched with residential agents and are scaling fast. Now we're expanding into multifamily, senior living, and institutional operators who need volume, speed, and consistency across their portfolios.</p>
 <p class="bio-hint">P.S. If you're the curious type, poke around. This site holds a few secrets.</p>`;
 
 const bioText = bioHTML.replace(/<[^>]+>/g, '').replace(/\n\n/g, '\n');
