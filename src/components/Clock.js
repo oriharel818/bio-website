@@ -1,4 +1,6 @@
 // Taskbar clock component
+import { handleClockClick } from '../effects/easterEggs.js';
+
 export function createClock(container) {
   const clockElement = document.createElement('div');
   clockElement.className = 'taskbar-clock';
@@ -15,6 +17,9 @@ export function createClock(container) {
 
     clockElement.textContent = `${hours}:${minutes} ${ampm}`;
   }
+
+  // Easter egg: click clock at :00 seconds for fireworks
+  clockElement.addEventListener('click', handleClockClick);
 
   updateClock();
   setInterval(updateClock, 1000);

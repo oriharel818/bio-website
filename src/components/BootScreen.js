@@ -16,7 +16,7 @@ export function createBootScreen(onComplete) {
           <span class="ori-os">OS</span>
         </div>
       </div>
-      <div class="boot-tagline">Born in '98. Built in '98.</div>
+      <div class="boot-tagline">Brought online 1998.</div>
       <div class="boot-progress">
         <div class="progress-track">
           <div class="progress-blocks"></div>

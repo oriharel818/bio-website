@@ -63,6 +63,17 @@ export function openRecycleBinWindow() {
         selectedItem = row;
       });
 
+      // Double-click to open files with content
+      row.addEventListener('dblclick', () => {
+        const index = parseInt(row.dataset.index);
+        const item = recycleBinItems[index];
+        if (item && item.content) {
+          showErrorDialog(item.content, item.name);
+        } else {
+          showErrorDialog('This file is too corrupted to open.\n\nOr maybe it never existed in the first place.', 'Open Failed');
+        }
+      });
+
       // Right-click context menu simulation
       row.addEventListener('contextmenu', (e) => {
         e.preventDefault();

@@ -5,6 +5,7 @@ import { createDesktop } from './components/Desktop.js';
 import { createTaskbar } from './components/Taskbar.js';
 import { openBioWindow } from './windows/BioWindow.js';
 import { showErrorDialog } from './utils/humor.js';
+import { initEasterEggs } from './effects/easterEggs.js';
 
 let isScreenOn = true;
 
@@ -23,6 +24,9 @@ function init() {
 
     // Set up CRT control buttons
     setupCRTControls();
+
+    // Initialize easter eggs
+    initEasterEggs();
   });
 }
 

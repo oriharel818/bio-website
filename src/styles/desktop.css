@@ -64,11 +64,27 @@
   border-radius: 2px;
 }
 
+/* Lasso selection box */
+.selection-box {
+  position: absolute;
+  border: 1px dashed #000080;
+  background: rgba(0, 0, 128, 0.15);
+  pointer-events: none;
+  z-index: 1000;
+}
+
 .icon-image {
   font-size: 42px;
   margin-bottom: 6px;
   filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.4));
   transition: transform 0.15s;
+}
+
+.icon-image .icon-img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.4));
 }
 
 .desktop-icon:hover .icon-image {

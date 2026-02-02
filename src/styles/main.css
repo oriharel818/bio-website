@@ -6,10 +6,62 @@
 @import './windows.css';
 @import './paint.css';
 @import './solitaire.css';
+@import './effects.css';
 
 * {
   box-sizing: border-box;
 }
+
+/* Classic Windows 98 Cursors */
+
+/* Default arrow cursor */
+.crt-screen {
+  cursor: url('/assets/cursors/pointer.svg') 0 0, default;
+}
+
+/* Pointer/hand cursor for clickable elements */
+.crt-screen a,
+.crt-screen button,
+.crt-screen .desktop-icon,
+.crt-screen .start-button,
+.crt-screen .start-menu-item,
+.crt-screen .menu-label,
+.crt-screen .dropdown-item,
+.crt-screen .taskbar-window-btn,
+.crt-screen .title-bar-controls button,
+.crt-screen .venture-row,
+.crt-screen .recycle-item,
+.crt-screen .tree-category-label,
+.crt-screen .tree-book,
+.crt-screen .folder-icon-item,
+.crt-screen .control-btn,
+.crt-screen .power-btn,
+.crt-screen .toolbar-btn,
+.crt-screen .color-swatch,
+.crt-screen .tool-btn,
+.crt-screen .tray-icon,
+.crt-screen .taskbar-clock,
+.crt-screen .company-link {
+  cursor: url('/assets/cursors/hand.svg') 5 0, pointer;
+}
+
+/* Text cursor for inputs */
+.crt-screen input,
+.crt-screen textarea,
+.crt-screen [contenteditable="true"] {
+  cursor: text;
+}
+
+/* Resize cursor */
+.crt-screen .resize-handle {
+  cursor: nwse-resize;
+}
+
+/* Crosshair for paint canvas */
+.crt-screen #paint-canvas {
+  cursor: crosshair;
+}
+
 
 html, body {
   margin: 0;

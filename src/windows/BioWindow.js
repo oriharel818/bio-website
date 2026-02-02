@@ -12,7 +12,8 @@ const bioHTML = `<p>I'm Ori.</p>
 <p>After thousands of productions, one thing became clear: video sells real estate. Nothing else comes close.</p>
 <p>But most agents will never use it. Shoots cost too much. Timelines slip. Quality is inconsistent. The best marketing tool in real estate is locked behind a door that 99% of the industry can't open.</p>
 <p>I'm building <a href="#" class="company-link" data-company="reele">Reel-E.ai</a> to change that.</p>
-<p>Professional property video. Instant. For everyone.</p>`;
+<p>Professional property video. Instant. For everyone.</p>
+<p class="bio-hint">P.S. If you're the curious type, poke around. This site holds a few secrets.</p>`;
 
 const bioText = bioHTML.replace(/<[^>]+>/g, '').replace(/\n\n/g, '\n');
 

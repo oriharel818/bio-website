@@ -30,11 +30,17 @@ export class PaintApp {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.saveState();
 
-    // Set up event listeners
+    // Set up mouse event listeners
     this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
     this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
     this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
     this.canvas.addEventListener('mouseleave', this.handleMouseUp.bind(this));
+
+    // Set up touch event listeners
+    this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+    this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+    this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+    this.canvas.addEventListener('touchcancel', this.handleTouchEnd.bind(this), { passive: false });
   }
 
   getMousePos(e) {
@@ -45,6 +51,76 @@ export class PaintApp {
       x: Math.floor((e.clientX - rect.left) * scaleX),
       y: Math.floor((e.clientY - rect.top) * scaleY)
     };
+  }
+
+  getTouchPos(e) {
+    const touch = e.touches[0] || e.changedTouches[0];
+    const rect = this.canvas.getBoundingClientRect();
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
+    return {
+      x: Math.floor((touch.clientX - rect.left) * scaleX),
+      y: Math.floor((touch.clientY - rect.top) * scaleY)
+    };
+  }
+
+  handleTouchStart(e) {
+    e.preventDefault();
+    const pos = this.getTouchPos(e);
+    this.isDrawing = true;
+    this.lastX = pos.x;
+    this.lastY = pos.y;
+
+    if (['rectangle', 'ellipse', 'line'].includes(this.currentTool)) {
+      this.shapeStart = { x: pos.x, y: pos.y };
+      this.tempCanvas = document.createElement('canvas');
+      this.tempCanvas.width = this.canvas.width;
+      this.tempCanvas.height = this.canvas.height;
+      this.tempCanvas.getContext('2d').drawImage(this.canvas, 0, 0);
+    } else if (this.currentTool === 'fill') {
+      this.floodFill(pos.x, pos.y, this.currentColor);
+      this.saveState();
+    } else if (this.currentTool === 'pencil' || this.currentTool === 'brush' || this.currentTool === 'eraser') {
+      this.ctx.beginPath();
+      this.ctx.arc(pos.x, pos.y, this.getToolSize() / 2, 0, Math.PI * 2);
+      this.ctx.fillStyle = this.currentTool === 'eraser' ? '#ffffff' : this.currentColor;
+      this.ctx.fill();
+    }
+
+    this.updateStatus(pos);
+  }
+
+  handleTouchMove(e) {
+    e.preventDefault();
+    const pos = this.getTouchPos(e);
+    this.updateStatus(pos);
+
+    if (!this.isDrawing) return;
+
+    if (['rectangle', 'ellipse', 'line'].includes(this.currentTool)) {
+      this.ctx.drawImage(this.tempCanvas, 0, 0);
+      this.drawShape(this.shapeStart.x, this.shapeStart.y, pos.x, pos.y, true);
+    } else if (this.currentTool === 'pencil' || this.currentTool === 'brush' || this.currentTool === 'eraser') {
+      this.drawLine(this.lastX, this.lastY, pos.x, pos.y);
+      this.lastX = pos.x;
+      this.lastY = pos.y;
+    }
+  }
+
+  handleTouchEnd(e) {
+    e.preventDefault();
+    if (!this.isDrawing) return;
+    this.isDrawing = false;
+
+    if (['rectangle', 'ellipse', 'line'].includes(this.currentTool) && this.shapeStart) {
+      const pos = this.getTouchPos(e);
+      this.ctx.drawImage(this.tempCanvas, 0, 0);
+      this.drawShape(this.shapeStart.x, this.shapeStart.y, pos.x, pos.y, false);
+      this.shapeStart = null;
+      this.tempCanvas = null;
+    }
+
+    this.saveState();
   }
 
   handleMouseDown(e) {

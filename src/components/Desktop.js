@@ -20,7 +20,9 @@ const desktopIcons = [
   { id: 'reading-list', name: 'Reading_List', icon: '📚', tooltip: tooltips.readingList, action: openReadingListWindow },
   { id: 'asteroids', name: 'Asteroids.exe', icon: '🚀', tooltip: tooltips.asteroids, action: openAsteroidsGameWindow },
   { id: 'solitaire', name: 'Solitaire', icon: '🃏', tooltip: tooltips.solitaire, action: openSolitaireWindow },
-  { id: 'paint', name: 'Paint', icon: '🎨', tooltip: tooltips.paint, action: openPaintWindow }
+  { id: 'paint', name: 'Paint', icon: '🎨', tooltip: tooltips.paint, action: openPaintWindow },
+  { id: 'reele', name: 'Reel-E.ai', icon: '', iconImage: '/assets/images/reele-logo.png', tooltip: 'AI-powered property video', action: () => window.open('https://reel-e.ai', '_blank') },
+  { id: 'lumara', name: 'Lumara Media', icon: '', iconImage: '/assets/images/lumara-logo.png', tooltip: 'Corporate video production', action: () => window.open('https://lumaramedia.com', '_blank') }
 ];
 
 // Track desktop clicks for easter egg
@@ -33,12 +35,123 @@ export function createDesktop() {
     <div class="desktop-icons">
       ${desktopIcons.map(icon => `
         <div class="desktop-icon" data-id="${icon.id}" title="${icon.tooltip}">
-          <div class="icon-image">${icon.icon}</div>
+          <div class="icon-image">${icon.iconImage ? `<img src="${icon.iconImage}" alt="${icon.name}" class="icon-img">` : icon.icon}</div>
           <div class="icon-label">${icon.name}</div>
         </div>
       `).join('')}
     </div>
   `;
+
+  // Lasso selection state
+  let isSelecting = false;
+  let selectionBox = null;
+  let startX = 0;
+  let startY = 0;
+  let selectedIcons = new Set();
+
+  // Create selection box element
+  function createSelectionBox() {
+    const box = document.createElement('div');
+    box.className = 'selection-box';
+    return box;
+  }
+
+  // Check if two rectangles intersect
+  function rectsIntersect(r1, r2) {
+    return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
+  }
+
+  // Get desktop-relative coordinates
+  function getDesktopCoords(e) {
+    const rect = desktop.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  }
+
+  // Mouse down - start selection
+  desktop.addEventListener('mousedown', (e) => {
+    const icon = e.target.closest('.desktop-icon');
+
+    // Only start lasso on empty space (left click)
+    if (icon || e.button !== 0) return;
+
+    e.preventDefault();
+    isSelecting = true;
+    const coords = getDesktopCoords(e);
+    startX = coords.x;
+    startY = coords.y;
+
+    // Clear previous selection unless shift is held
+    if (!e.shiftKey) {
+      desktop.querySelectorAll('.desktop-icon.selected').forEach(i => i.classList.remove('selected'));
+      selectedIcons.clear();
+    }
+
+    // Create and add selection box
+    selectionBox = createSelectionBox();
+    selectionBox.style.left = startX + 'px';
+    selectionBox.style.top = startY + 'px';
+    selectionBox.style.width = '0px';
+    selectionBox.style.height = '0px';
+    desktop.appendChild(selectionBox);
+  });
+
+  // Mouse move - update selection box
+  document.addEventListener('mousemove', (e) => {
+    if (!isSelecting || !selectionBox) return;
+
+    const coords = getDesktopCoords(e);
+    const currentX = Math.max(0, Math.min(coords.x, desktop.clientWidth));
+    const currentY = Math.max(0, Math.min(coords.y, desktop.clientHeight));
+
+    const left = Math.min(startX, currentX);
+    const top = Math.min(startY, currentY);
+    const width = Math.abs(currentX - startX);
+    const height = Math.abs(currentY - startY);
+
+    selectionBox.style.left = left + 'px';
+    selectionBox.style.top = top + 'px';
+    selectionBox.style.width = width + 'px';
+    selectionBox.style.height = height + 'px';
+
+    // Check which icons are within selection
+    const selectionRect = {
+      left: left,
+      top: top,
+      right: left + width,
+      bottom: top + height
+    };
+
+    desktop.querySelectorAll('.desktop-icon').forEach(iconEl => {
+      const iconRect = {
+        left: iconEl.offsetLeft,
+        top: iconEl.offsetTop,
+        right: iconEl.offsetLeft + iconEl.offsetWidth,
+        bottom: iconEl.offsetTop + iconEl.offsetHeight
+      };
+
+      if (rectsIntersect(selectionRect, iconRect)) {
+        iconEl.classList.add('selected');
+        selectedIcons.add(iconEl.dataset.id);
+      } else if (!e.shiftKey) {
+        iconEl.classList.remove('selected');
+        selectedIcons.delete(iconEl.dataset.id);
+      }
+    });
+  });
+
+  // Mouse up - end selection
+  document.addEventListener('mouseup', (e) => {
+    if (!isSelecting) return;
+
+    isSelecting = false;
+    if (selectionBox) {
+      selectionBox.remove();
+      selectionBox = null;
+    }
+  });
 
   // Handle icon clicks - SINGLE CLICK to open
   desktop.addEventListener('click', (e) => {
@@ -52,6 +165,11 @@ export function createDesktop() {
           showErrorDialog("Stop clicking. There's nothing here.", 'Desktop');
         });
         emptyClickCount = 0;
+      }
+      // Clear selection on empty click (unless just finished dragging)
+      if (!e.shiftKey) {
+        desktop.querySelectorAll('.desktop-icon.selected').forEach(i => i.classList.remove('selected'));
+        selectedIcons.clear();
       }
       return;
     }
@@ -74,7 +192,7 @@ export function createDesktop() {
 
   // Prevent text selection on icons
   desktop.addEventListener('selectstart', (e) => {
-    if (e.target.closest('.desktop-icon')) {
+    if (e.target.closest('.desktop-icon') || isSelecting) {
       e.preventDefault();
     }
   });

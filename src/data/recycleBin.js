@@ -34,5 +34,19 @@ export const recycleBinItems = [
     date: 'Deleted 2025',
     size: '0 KB (file is empty, I swear)',
     icon: '😢'
+  },
+  {
+    name: 'notes_to_self.txt',
+    date: 'Deleted 2026',
+    size: '1 KB',
+    icon: '📝',
+    content: `cheat codes i found:
+
+- type "letitsnow" for winter vibes
+- type "PARTY" (hold shift!) for disco mode
+- click the clock at exactly :00 seconds
+- konami code but backwards: A B right left right left down down up up
+
+shhh don't tell anyone`
   }
 ];
