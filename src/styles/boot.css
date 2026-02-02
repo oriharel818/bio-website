@@ -114,6 +114,21 @@
   letter-spacing: 1px;
 }
 
+/* Click to start state */
+.boot-container.click-to-start {
+  cursor: pointer;
+}
+
+.click-to-start .boot-tagline {
+  animation: blink 1s ease-in-out infinite;
+  font-style: normal;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 .boot-progress {
   margin-bottom: 40px;
 }

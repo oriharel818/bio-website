@@ -15,9 +15,9 @@ export async function initAudio() {
     if (ctx.state === 'suspended') {
       await ctx.resume();
     }
-    return ctx.state === 'running';
+    return ctx.state === 'running' ? ctx : null;
   } catch (e) {
-    return false;
+    return null;
   }
 }
 
