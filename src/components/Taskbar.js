@@ -3,7 +3,7 @@ import { windowManager } from '../utils/windowManager.js';
 import { createClock } from './Clock.js';
 import { showShutdownScreen } from './ShutdownScreen.js';
 import { desktopIcons } from './Desktop.js';
-import { playClick, toggleMute, getMuted, isAudioReady } from '../utils/audioManager.js';
+import { playClick, toggleMute, getMuted } from '../utils/audioManager.js';
 
 export function createTaskbar() {
   const taskbar = document.getElementById('taskbar');
@@ -57,7 +57,6 @@ export function createTaskbar() {
 
   startButton.addEventListener('click', (e) => {
     e.stopPropagation();
-    playClick();
     startMenuOpen = !startMenuOpen;
     startMenu.classList.toggle('active', startMenuOpen);
     startButton.classList.toggle('active', startMenuOpen);
@@ -119,8 +118,6 @@ function createStartMenu() {
   menu.addEventListener('click', (e) => {
     const item = e.target.closest('.start-menu-item');
     if (!item) return;
-
-    playClick();
 
     const action = item.dataset.action;
     const id = item.dataset.id;

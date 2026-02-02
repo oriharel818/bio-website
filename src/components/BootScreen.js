@@ -1,5 +1,38 @@
 // oriOS Boot Screen
-import { initAudio, playStartup } from '../utils/audioManager.js';
+
+// Self-contained startup sound - creates fresh AudioContext
+function playStartupSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const notes = [
+      { freq: 523.25, start: 0, duration: 0.5 },     // C5
+      { freq: 659.25, start: 0.1, duration: 0.5 },   // E5
+      { freq: 783.99, start: 0.2, duration: 0.5 },   // G5
+      { freq: 1046.50, start: 0.3, duration: 0.6 },  // C6
+    ];
+
+    notes.forEach(note => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(note.freq, ctx.currentTime + note.start);
+
+      gain.gain.setValueAtTime(0, ctx.currentTime + note.start);
+      gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + note.start + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + note.start + note.duration);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(ctx.currentTime + note.start);
+      osc.stop(ctx.currentTime + note.start + note.duration);
+    });
+  } catch (e) {
+    // Silent fail - browser may block audio
+  }
+}
 
 export function createBootScreen(onComplete) {
   const bootScreen = document.getElementById('boot-screen');
@@ -46,10 +79,8 @@ export function createBootScreen(onComplete) {
     } else {
       clearInterval(progressInterval);
 
-      // Try to play startup sound (may not work without prior user interaction)
-      initAudio().then(() => {
-        playStartup();
-      });
+      // Play startup chime
+      playStartupSound();
 
       setTimeout(() => {
         bootScreen.classList.remove('active');

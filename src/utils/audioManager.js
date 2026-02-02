@@ -21,45 +21,60 @@ export async function initAudio() {
   }
 }
 
-// Realistic mouse click sound
-export async function playClick() {
+// Realistic mouse click sound - mechanical switch with thunk
+export function playClick() {
   if (isMuted) return;
 
   try {
     const ctx = getAudioContext();
     if (ctx.state === 'suspended') {
-      await ctx.resume();
+      ctx.resume();
     }
 
-    // Very short click - like a mechanical switch
-    const clickDuration = 0.012; // 12ms
-    const buffer = ctx.createBuffer(1, ctx.sampleRate * clickDuration, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
+    const now = ctx.currentTime;
 
-    // Sharp transient click
-    for (let i = 0; i < data.length; i++) {
-      const t = i / data.length;
-      // Sharp attack, fast decay - sounds like plastic click
-      const envelope = Math.exp(-t * 50);
-      data[i] = (Math.random() * 2 - 1) * envelope;
+    // Component 1: Sharp noise transient (the "click")
+    const clickDuration = 0.008; // 8ms
+    const clickBuffer = ctx.createBuffer(1, ctx.sampleRate * clickDuration, ctx.sampleRate);
+    const clickData = clickBuffer.getChannelData(0);
+
+    for (let i = 0; i < clickData.length; i++) {
+      const t = i / clickData.length;
+      const envelope = Math.exp(-t * 80); // Very fast decay
+      clickData[i] = (Math.random() * 2 - 1) * envelope;
     }
 
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
+    const clickSource = ctx.createBufferSource();
+    clickSource.buffer = clickBuffer;
 
-    // High-pass filter to make it crispy
-    const highpass = ctx.createBiquadFilter();
-    highpass.type = 'highpass';
-    highpass.frequency.value = 1000;
+    const clickHighpass = ctx.createBiquadFilter();
+    clickHighpass.type = 'highpass';
+    clickHighpass.frequency.value = 2000;
 
-    const gain = ctx.createGain();
-    gain.gain.value = 0.3;
+    const clickGain = ctx.createGain();
+    clickGain.gain.value = 0.15;
 
-    source.connect(highpass);
-    highpass.connect(gain);
-    gain.connect(ctx.destination);
+    clickSource.connect(clickHighpass);
+    clickHighpass.connect(clickGain);
+    clickGain.connect(ctx.destination);
 
-    source.start();
+    // Component 2: Low "thunk" (the mechanical body)
+    const thunkOsc = ctx.createOscillator();
+    thunkOsc.type = 'sine';
+    thunkOsc.frequency.setValueAtTime(150, now);
+    thunkOsc.frequency.exponentialRampToValueAtTime(80, now + 0.02);
+
+    const thunkGain = ctx.createGain();
+    thunkGain.gain.setValueAtTime(0.1, now);
+    thunkGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+    thunkOsc.connect(thunkGain);
+    thunkGain.connect(ctx.destination);
+
+    // Play both components
+    clickSource.start(now);
+    thunkOsc.start(now);
+    thunkOsc.stop(now + 0.03);
   } catch (e) {
     // Silent fail
   }

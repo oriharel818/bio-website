@@ -7,6 +7,7 @@ import { openBioWindow } from './windows/BioWindow.js';
 import { showErrorDialog } from './utils/humor.js';
 import { initEasterEggs } from './effects/easterEggs.js';
 import { initFly } from './effects/fly.js';
+import { playClick } from './utils/audioManager.js';
 
 let isScreenOn = true;
 
@@ -17,6 +18,9 @@ function init() {
     // After boot completes, show desktop
     createDesktop();
     createTaskbar();
+
+    // Global click sound on ALL clicks
+    document.addEventListener('click', playClick, true);
 
     // Auto-open the bio window after a short delay
     setTimeout(() => {
