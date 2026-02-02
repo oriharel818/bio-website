@@ -30,8 +30,11 @@ export function openSolitaireWindow() {
       <div class="solitaire-canvas-container">
         <canvas id="solitaire-canvas" width="560" height="450"></canvas>
       </div>
-      <div class="solitaire-instructions">
+      <div class="solitaire-instructions desktop-only">
         Drag cards • Double-click to auto-move to foundation • Click stock to draw
+      </div>
+      <div class="solitaire-instructions mobile-only">
+        Drag cards • Double-tap to auto-move • Tap stock to draw
       </div>
     </div>
   `;

@@ -14,6 +14,7 @@ export class SolitaireGame {
     this.dragging = null;
     this.dragOffsetX = 0;
     this.dragOffsetY = 0;
+    this.lastTouch = null;
 
     this.setupEventListeners();
     this.newGame();
@@ -104,49 +105,54 @@ export class SolitaireGame {
     this.lastTapTime = 0;
   }
 
-  getTouchPos(e) {
-    const touch = e.touches[0] || e.changedTouches[0];
-    const rect = this.canvas.getBoundingClientRect();
-    return {
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top
-    };
-  }
-
   handleTouchStart(e) {
     e.preventDefault();
+    if (!e.touches || e.touches.length === 0) return;
+
+    const touch = e.touches[0];
     const now = Date.now();
-    const pos = this.getTouchPos(e);
 
     // Check for double tap
     if (now - this.lastTapTime < 300) {
-      this.handleDoubleClick({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+      this.handleDoubleClick({ clientX: touch.clientX, clientY: touch.clientY });
       this.lastTapTime = 0;
       return;
     }
     this.lastTapTime = now;
+    this.lastTouch = { x: touch.clientX, y: touch.clientY };
 
     // Simulate mousedown
-    this.handleMouseDown({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+    this.handleMouseDown({ clientX: touch.clientX, clientY: touch.clientY });
   }
 
   handleTouchMove(e) {
     if (!this.dragging) return;
+    if (!e.touches || e.touches.length === 0) return;
     e.preventDefault();
-    this.handleMouseMove({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+
+    const touch = e.touches[0];
+    this.lastTouch = { x: touch.clientX, y: touch.clientY };
+    this.handleMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
   }
 
   handleTouchEnd(e) {
     e.preventDefault();
-    const touch = e.changedTouches[0];
-    this.handleMouseUp({ clientX: touch.clientX, clientY: touch.clientY });
+    // Use last known touch position or changedTouches
+    const touch = (e.changedTouches && e.changedTouches[0]) || this.lastTouch;
+    if (touch) {
+      this.handleMouseUp({ clientX: touch.clientX || touch.x, clientY: touch.clientY || touch.y });
+    }
+    this.lastTouch = null;
   }
 
   getMousePos(e) {
     const rect = this.canvas.getBoundingClientRect();
+    // Account for canvas scaling (CSS size vs actual canvas size)
+    const scaleX = this.canvas.width / rect.width;
+    const scaleY = this.canvas.height / rect.height;
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
     };
   }
 
