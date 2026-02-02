@@ -1,5 +1,5 @@
 // oriOS Boot Screen
-import { playStartup } from '../utils/audioManager.js';
+import { initAudio, playStartup } from '../utils/audioManager.js';
 
 export function createBootScreen(onComplete) {
   const bootScreen = document.getElementById('boot-screen');
@@ -25,40 +25,53 @@ export function createBootScreen(onComplete) {
         </div>
       </div>
       <div class="boot-copyright">
-        <p>Starting up...</p>
+        <p class="click-to-start">Click anywhere to start</p>
       </div>
     </div>
   `;
 
   bootScreen.classList.add('active');
 
-  // Animate progress blocks
-  const progressBlocks = bootScreen.querySelector('.progress-blocks');
-  let blockCount = 0;
-  const maxBlocks = 20;
+  // Wait for click to start boot sequence
+  const startBoot = async () => {
+    bootScreen.removeEventListener('click', startBoot);
 
-  const progressInterval = setInterval(() => {
-    if (blockCount < maxBlocks) {
-      const block = document.createElement('div');
-      block.className = 'progress-block';
-      progressBlocks.appendChild(block);
-      blockCount++;
-    } else {
-      clearInterval(progressInterval);
+    // Initialize audio on user gesture
+    await initAudio();
 
-      // Play startup sound and fade out
-      playStartup();
+    // Update text
+    const clickText = bootScreen.querySelector('.click-to-start');
+    if (clickText) clickText.textContent = 'Starting up...';
 
-      setTimeout(() => {
-        bootScreen.classList.remove('active');
-        bootScreen.classList.add('fade-out');
+    // Animate progress blocks
+    const progressBlocks = bootScreen.querySelector('.progress-blocks');
+    let blockCount = 0;
+    const maxBlocks = 20;
+
+    const progressInterval = setInterval(() => {
+      if (blockCount < maxBlocks) {
+        const block = document.createElement('div');
+        block.className = 'progress-block';
+        progressBlocks.appendChild(block);
+        blockCount++;
+      } else {
+        clearInterval(progressInterval);
+
+        // Play startup sound after loading completes
+        playStartup();
 
         setTimeout(() => {
-          bootScreen.style.display = 'none';
-          if (onComplete) onComplete();
-        }, 500);
-      }, 800);
-    }
-  }, 100);
-}
+          bootScreen.classList.remove('active');
+          bootScreen.classList.add('fade-out');
 
+          setTimeout(() => {
+            bootScreen.style.display = 'none';
+            if (onComplete) onComplete();
+          }, 500);
+        }, 800);
+      }
+    }, 100);
+  };
+
+  bootScreen.addEventListener('click', startBoot);
+}

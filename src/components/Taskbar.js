@@ -3,7 +3,7 @@ import { windowManager } from '../utils/windowManager.js';
 import { createClock } from './Clock.js';
 import { showShutdownScreen } from './ShutdownScreen.js';
 import { desktopIcons } from './Desktop.js';
-import { playClick, toggleMute, getMuted } from '../utils/audioManager.js';
+import { playClick, toggleMute, getMuted, isAudioReady } from '../utils/audioManager.js';
 
 export function createTaskbar() {
   const taskbar = document.getElementById('taskbar');
