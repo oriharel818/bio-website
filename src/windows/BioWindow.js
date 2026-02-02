@@ -7,12 +7,12 @@ let hasBeenReadLongEnough = false;
 let hasUnsavedChanges = false;
 
 const bioHTML = `<p>I'm Ori.</p>
-<p>I spent a decade building One Shot Productions into the go-to production company for luxury real estate and institutional clients. Selling Sunset, Million Dollar Listing, The Oppenheim Group, Ryan Serhant, "The One" at $500M, projects with Mr Beast. Over $50B in property value filmed.</p>
-<p>I expanded into institutional work through <a href="#" class="company-link" data-company="lumara">Lumara Media</a>, serving Blackstone, Fortress, Disney, and Netflix on corporate communications, investor relations, and portfolio marketing.</p>
-<p>After thousands of productions, the pattern was clear: high-quality video is the highest-leverage marketing tool in real estate. But the current model doesn't scale. It requires expensive crews, manual editing, and long turnarounds. That's fine for a $50M listing. It doesn't work when you're trying to cover every unit in a 10,000-property portfolio.</p>
-<p>So I built <a href="#" class="company-link" data-company="reele">Reel-E.ai</a>.</p>
-<p>We own our inference stack. No wrappers, no API dependencies. We codified a decade of production expertise into a purpose-built engine that delivers pro-quality property videos instantly and at a fraction of the cost.</p>
-<p>We launched with residential agents and are scaling fast. Now we're expanding into multifamily, senior living, and institutional operators who need volume, speed, and consistency across their portfolios.</p>
+<p>I spent a decade filming real estate for the people you've seen on TV. Selling Sunset, Million Dollar Listing, Ryan Serhant, The Oppenheim Group. We shot "The One" when it was listed at $500M. Over the years, we covered more than $50B in property value.</p>
+<p>That work led to institutional clients. Blackstone, Fortress, Disney, Netflix. Corporate films, investor content, portfolio marketing.</p>
+<p>Somewhere along the way, I realized the model was broken. The videos worked, but they required crews, editors, and timelines that didn't scale. Great for a $50M listing. Doesn't work for the agent grinding out 30 deals a year or the operator managing thousands of units.</p>
+<p>So I started building.</p>
+<p><a href="#" class="company-link" data-company="reele">Reel-E.ai</a> is the result. We own our inference stack and built the whole thing from scratch. No wrappers. It does what my team used to do, but instantly and at a fraction of the cost.</p>
+<p>We started with residential agents. Now we're expanding into multifamily, senior living, and institutional operators.</p>
 <p class="bio-hint">P.S. If you're the curious type, poke around. This site holds a few secrets.</p>`;
 
 const bioText = bioHTML.replace(/<[^>]+>/g, '').replace(/\n\n/g, '\n');
