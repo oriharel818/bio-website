@@ -387,9 +387,18 @@ html, body {
    ============================================ */
 @media (max-width: 768px) {
   /* Simplify CRT frame on mobile - just show the screen */
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+
   #crt-monitor {
     padding: 0;
     background: #008080;
+    height: 100%;
+    width: 100%;
   }
 
   .crt-outer {
@@ -398,10 +407,14 @@ html, body {
     box-shadow: none;
     padding: 0;
     animation: none;
+    height: 100%;
+    width: 100%;
   }
 
   .crt-main {
     padding: 0;
+    height: 100%;
+    width: 100%;
   }
 
   .crt-bezel {
@@ -409,6 +422,8 @@ html, body {
     border-radius: 0;
     padding: 0;
     box-shadow: none;
+    height: 100%;
+    width: 100%;
   }
 
   .crt-bottom-panel,
@@ -420,8 +435,8 @@ html, body {
   .crt-screen {
     min-width: 100%;
     min-height: 100%;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     max-width: none;
     max-height: none;
     border-radius: 0;
