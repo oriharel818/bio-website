@@ -3,7 +3,7 @@ import { windowManager } from '../utils/windowManager.js';
 import { createClock } from './Clock.js';
 import { showShutdownScreen } from './ShutdownScreen.js';
 import { desktopIcons } from './Desktop.js';
-import { playClick, toggleMute, getMuted } from '../utils/audioManager.js';
+import { playClick, toggleMute, getMuted, playStartup } from '../utils/audioManager.js';
 
 export function createTaskbar() {
   const taskbar = document.getElementById('taskbar');
@@ -24,7 +24,7 @@ export function createTaskbar() {
     <div class="taskbar-windows"></div>
     <div class="system-tray">
       <div class="tray-icons">
-        <span class="tray-icon volume-icon" title="Volume">🔊</span>
+        <span class="tray-icon volume-icon" title="Sound Off">🔇</span>
       </div>
       <div class="tray-divider"></div>
     </div>
@@ -44,7 +44,7 @@ export function createTaskbar() {
     volumeIcon.textContent = muted ? '🔇' : '🔊';
     volumeIcon.title = muted ? 'Sound Off' : 'Volume';
     if (!muted) {
-      playClick(); // Play a click to confirm sound is on
+      playStartup(); // Play startup chime when enabling sound
     }
   });
 

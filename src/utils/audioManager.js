@@ -1,6 +1,6 @@
 // Audio Manager - Synthesized sounds via Web Audio API
 let audioContext = null;
-let isMuted = false;
+let isMuted = true; // Default to muted
 let clickAudio = null;
 
 function getAudioContext() {
