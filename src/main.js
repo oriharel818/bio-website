@@ -19,8 +19,8 @@ function init() {
     createDesktop();
     createTaskbar();
 
-    // Global click sound on ALL clicks
-    document.addEventListener('click', playClick, true);
+    // Global click sound on mousedown (instant feedback)
+    document.addEventListener('mousedown', playClick, true);
 
     // Auto-open the bio window after a short delay
     setTimeout(() => {
