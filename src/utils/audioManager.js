@@ -1,6 +1,7 @@
 // Audio Manager - Synthesized sounds via Web Audio API
 let audioContext = null;
 let isMuted = false;
+let clickAudio = null;
 
 function getAudioContext() {
   if (!audioContext) {
@@ -21,60 +22,16 @@ export async function initAudio() {
   }
 }
 
-// Realistic mouse click sound - mechanical switch with thunk
+// Mouse click sound using MP3 file
 export function playClick() {
   if (isMuted) return;
 
   try {
-    const ctx = getAudioContext();
-    if (ctx.state === 'suspended') {
-      ctx.resume();
+    if (!clickAudio) {
+      clickAudio = new Audio('/assets/sounds/mouse-clicks.mp3');
     }
-
-    const now = ctx.currentTime;
-
-    // Component 1: Sharp noise transient (the "click")
-    const clickDuration = 0.008; // 8ms
-    const clickBuffer = ctx.createBuffer(1, ctx.sampleRate * clickDuration, ctx.sampleRate);
-    const clickData = clickBuffer.getChannelData(0);
-
-    for (let i = 0; i < clickData.length; i++) {
-      const t = i / clickData.length;
-      const envelope = Math.exp(-t * 80); // Very fast decay
-      clickData[i] = (Math.random() * 2 - 1) * envelope;
-    }
-
-    const clickSource = ctx.createBufferSource();
-    clickSource.buffer = clickBuffer;
-
-    const clickHighpass = ctx.createBiquadFilter();
-    clickHighpass.type = 'highpass';
-    clickHighpass.frequency.value = 2000;
-
-    const clickGain = ctx.createGain();
-    clickGain.gain.value = 0.15;
-
-    clickSource.connect(clickHighpass);
-    clickHighpass.connect(clickGain);
-    clickGain.connect(ctx.destination);
-
-    // Component 2: Low "thunk" (the mechanical body)
-    const thunkOsc = ctx.createOscillator();
-    thunkOsc.type = 'sine';
-    thunkOsc.frequency.setValueAtTime(150, now);
-    thunkOsc.frequency.exponentialRampToValueAtTime(80, now + 0.02);
-
-    const thunkGain = ctx.createGain();
-    thunkGain.gain.setValueAtTime(0.1, now);
-    thunkGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
-
-    thunkOsc.connect(thunkGain);
-    thunkGain.connect(ctx.destination);
-
-    // Play both components
-    clickSource.start(now);
-    thunkOsc.start(now);
-    thunkOsc.stop(now + 0.03);
+    clickAudio.currentTime = 0;
+    clickAudio.play().catch(() => {}); // Silent fail if blocked
   } catch (e) {
     // Silent fail
   }
