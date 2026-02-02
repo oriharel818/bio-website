@@ -8,7 +8,7 @@ let hasUnsavedChanges = false;
 
 const bioHTML = `<p>I'm Ori.</p>
 <p>I built <a href="#" class="company-link" data-company="oneshot">One Shot Productions</a> into the go-to production company for luxury real estate. We filmed for the agents you've seen on Selling Sunset and Million Dollar Listing. The Oppenheim Group, The Altman Brothers, Ryan Serhant. Shot THE ONE in Bel Air when it listed for $500 million. Even did a project with Mr Beast. Over $50 billion in property value total.</p>
-<p>Along the way, spun off the corporate work into <a href="#" class="company-link" data-company="lumara">Lumara Media</a> for clients like Blackstone, Greystar, and Fortress. Still running, still profitable. Also tried <a href="#" class="company-link" data-company="glimpse">VR</a> and <a href="#" class="company-link" data-company="excom">digital twins</a>. Some worked, some didn't.</p>
+<p>Spun off corporate work into <a href="#" class="company-link" data-company="lumara">Lumara Media</a>. Blackstone, Greystar, Fortress, Hines, Stockbridge Capital, and many others. Took swings at <a href="#" class="company-link" data-company="glimpse">VR activations</a> and <a href="#" class="company-link" data-company="excom">3D digital twins</a> too. Can't win 'em all.</p>
 <p>After thousands of productions, one thing became clear: video sells real estate. Nothing else comes close.</p>
 <p>But most agents will never use it. Shoots cost too much. Timelines slip. Quality is inconsistent. The best marketing tool in real estate is locked behind a door that 99% of the industry can't open.</p>
 <p>I'm building <a href="#" class="company-link" data-company="reele">Reel-E.ai</a> to change that.</p>
