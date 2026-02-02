@@ -1,0 +1,127 @@
+// Window factory for creating 98-style windows
+import { makeDraggable } from '../utils/draggable.js';
+import { windowManager } from '../utils/windowManager.js';
+
+let windowCounter = 0;
+
+export function createWindow(options) {
+  const {
+    id = `window-${++windowCounter}`,
+    title = 'Window',
+    icon = '📄',
+    width = 400,
+    height = 300,
+    x = null,
+    y = null,
+    content = '',
+    className = '',
+    resizable = true,
+    onClose = null,
+    menuBar = null
+  } = options;
+
+  // Check if already open
+  if (windowManager.isOpen(id)) {
+    windowManager.focus(id);
+    return null;
+  }
+
+  const windowElement = document.createElement('div');
+  windowElement.className = `window ${className}`;
+  windowElement.id = id;
+  windowElement.style.width = typeof width === 'number' ? `${width}px` : width;
+  windowElement.style.height = typeof height === 'number' ? `${height}px` : height;
+
+  // Position the window
+  if (x !== null && y !== null) {
+    windowElement.style.left = `${x}px`;
+    windowElement.style.top = `${y}px`;
+  } else {
+    // Center with slight offset based on counter
+    const offsetX = (windowCounter % 5) * 30;
+    const offsetY = (windowCounter % 5) * 30;
+    windowElement.style.left = `calc(50% - ${width / 2}px + ${offsetX}px)`;
+    windowElement.style.top = `calc(50% - ${height / 2}px + ${offsetY}px - 50px)`;
+  }
+
+  windowElement.innerHTML = `
+    <div class="title-bar">
+      <div class="title-bar-text">
+        <span class="window-icon">${icon}</span>
+        ${title}
+      </div>
+      <div class="title-bar-controls">
+        <button aria-label="Minimize" class="minimize-btn"></button>
+        <button aria-label="Maximize" class="maximize-btn"></button>
+        <button aria-label="Close" class="close-btn"></button>
+      </div>
+    </div>
+    ${menuBar ? `<div class="menu-bar">${menuBar}</div>` : ''}
+    <div class="window-body">
+      ${content}
+    </div>
+    ${resizable ? '<div class="resize-handle"></div>' : ''}
+  `;
+
+  // Add to DOM
+  document.getElementById('windows-container').appendChild(windowElement);
+
+  // Make draggable
+  const titleBar = windowElement.querySelector('.title-bar');
+  makeDraggable(windowElement, titleBar);
+
+  // Register with window manager
+  windowManager.register(id, windowElement, { title, icon });
+
+  // Button handlers
+  windowElement.querySelector('.minimize-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    windowManager.minimize(id);
+  });
+
+  windowElement.querySelector('.maximize-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    windowManager.maximize(id);
+  });
+
+  windowElement.querySelector('.close-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (onClose) {
+      const shouldClose = onClose();
+      if (shouldClose === false) return;
+    }
+    windowManager.close(id);
+  });
+
+  // Handle resize
+  if (resizable) {
+    const resizeHandle = windowElement.querySelector('.resize-handle');
+    let isResizing = false;
+    let startWidth, startHeight, startX, startY;
+
+    resizeHandle.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      startWidth = windowElement.offsetWidth;
+      startHeight = windowElement.offsetHeight;
+      startX = e.clientX;
+      startY = e.clientY;
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+
+      const newWidth = Math.max(200, startWidth + (e.clientX - startX));
+      const newHeight = Math.max(150, startHeight + (e.clientY - startY));
+
+      windowElement.style.width = `${newWidth}px`;
+      windowElement.style.height = `${newHeight}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      isResizing = false;
+    });
+  }
+
+  return windowElement;
+}
