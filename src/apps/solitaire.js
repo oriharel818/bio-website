@@ -89,10 +89,57 @@ export class SolitaireGame {
   }
 
   setupEventListeners() {
+    // Mouse events
     this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
     this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
     this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
     this.canvas.addEventListener('dblclick', this.handleDoubleClick.bind(this));
+
+    // Touch events for mobile
+    this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+    this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+    this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+
+    // Track for double tap
+    this.lastTapTime = 0;
+  }
+
+  getTouchPos(e) {
+    const touch = e.touches[0] || e.changedTouches[0];
+    const rect = this.canvas.getBoundingClientRect();
+    return {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top
+    };
+  }
+
+  handleTouchStart(e) {
+    e.preventDefault();
+    const now = Date.now();
+    const pos = this.getTouchPos(e);
+
+    // Check for double tap
+    if (now - this.lastTapTime < 300) {
+      this.handleDoubleClick({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+      this.lastTapTime = 0;
+      return;
+    }
+    this.lastTapTime = now;
+
+    // Simulate mousedown
+    this.handleMouseDown({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+  }
+
+  handleTouchMove(e) {
+    if (!this.dragging) return;
+    e.preventDefault();
+    this.handleMouseMove({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+  }
+
+  handleTouchEnd(e) {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    this.handleMouseUp({ clientX: touch.clientX, clientY: touch.clientY });
   }
 
   getMousePos(e) {

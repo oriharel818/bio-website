@@ -125,9 +125,89 @@
 }
 
 /* ============================================
+   MOBILE CONTROLS FOR GAMES
+   ============================================ */
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.mobile-controls {
+  padding: 8px;
+  background: linear-gradient(180deg, #d4d4d4, #c0c0c0);
+  border-top: 1px solid #808080;
+}
+
+.mobile-controls-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.mobile-controls-row:last-child {
+  margin-bottom: 0;
+}
+
+.mobile-btn {
+  width: 60px;
+  height: 50px;
+  font-size: 20px;
+  font-weight: bold;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  background: linear-gradient(180deg, #e0e0e0, #c0c0c0);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.mobile-btn:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: linear-gradient(180deg, #a0a0a0, #c0c0c0);
+}
+
+.mobile-btn small {
+  font-size: 8px;
+  display: block;
+  margin-top: -4px;
+}
+
+.fire-btn {
+  width: 70px;
+  background: linear-gradient(180deg, #ff6666, #cc0000);
+  color: white;
+  font-size: 14px;
+}
+
+.fire-btn:active {
+  background: linear-gradient(180deg, #cc0000, #990000);
+}
+
+.thrust-btn {
+  background: linear-gradient(180deg, #66ff66, #00cc00);
+}
+
+.thrust-btn:active {
+  background: linear-gradient(180deg, #00cc00, #009900);
+}
+
+/* ============================================
    MOBILE RESPONSIVENESS
    ============================================ */
 @media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: block !important;
+  }
+
   .solitaire-header {
     padding: 6px 12px;
     font-size: 12px;
@@ -159,5 +239,17 @@
   .asteroids-action-btn {
     padding: 10px 20px;
     font-size: 14px;
+  }
+
+  /* Larger touch targets on mobile */
+  .mobile-btn {
+    width: 70px;
+    height: 55px;
+    font-size: 24px;
+  }
+
+  .fire-btn {
+    width: 80px;
+    font-size: 16px;
   }
 }

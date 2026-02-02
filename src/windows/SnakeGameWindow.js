@@ -33,8 +33,18 @@ export function openSnakeGameWindow() {
         <canvas id="snake-canvas" width="400" height="300"></canvas>
         <button class="snake-action-btn" id="snake-start-btn">Start Game</button>
       </div>
-      <div class="snake-instructions">
+      <div class="snake-instructions desktop-only">
         Arrow keys to move • Space to start/pause
+      </div>
+      <div class="mobile-controls mobile-only">
+        <div class="mobile-controls-row">
+          <button class="mobile-btn" data-dir="up">▲</button>
+        </div>
+        <div class="mobile-controls-row">
+          <button class="mobile-btn" data-dir="left">◀</button>
+          <button class="mobile-btn" data-dir="down">▼</button>
+          <button class="mobile-btn" data-dir="right">▶</button>
+        </div>
       </div>
     </div>
   `;
@@ -134,6 +144,21 @@ export function openSnakeGameWindow() {
   };
 
   document.addEventListener('keydown', handleKeydown);
+
+  // Mobile touch controls
+  windowEl.querySelectorAll('.mobile-btn').forEach(btn => {
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const dir = btn.dataset.dir;
+      if (dir) {
+        if (!game.gameLoop && !game.gameOver) {
+          game.start();
+          updateActionButton();
+        }
+        game.setDirection(dir);
+      }
+    });
+  });
 
   // Menu handlers
   windowEl.querySelector('.new-game-btn').addEventListener('click', () => {

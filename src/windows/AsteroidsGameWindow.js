@@ -34,8 +34,18 @@ export function openAsteroidsGameWindow() {
         <canvas id="asteroids-canvas" width="500" height="400"></canvas>
         <button class="asteroids-action-btn" id="asteroids-start-btn">Start Game</button>
       </div>
-      <div class="asteroids-instructions">
+      <div class="asteroids-instructions desktop-only">
         ← → Rotate • ↑ Thrust • SPACE Fire • P Pause
+      </div>
+      <div class="mobile-controls mobile-only asteroids-controls">
+        <div class="mobile-controls-row">
+          <button class="mobile-btn thrust-btn" data-key="ArrowUp">▲<br><small>THRUST</small></button>
+        </div>
+        <div class="mobile-controls-row">
+          <button class="mobile-btn" data-key="ArrowLeft">◀</button>
+          <button class="mobile-btn fire-btn" data-action="fire">FIRE</button>
+          <button class="mobile-btn" data-key="ArrowRight">▶</button>
+        </div>
       </div>
     </div>
   `;
@@ -156,6 +166,46 @@ export function openAsteroidsGameWindow() {
 
   document.addEventListener('keydown', handleKeydown);
   document.addEventListener('keyup', handleKeyup);
+
+  // Mobile touch controls
+  windowEl.querySelectorAll('.mobile-btn[data-key]').forEach(btn => {
+    const key = btn.dataset.key;
+
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (!game.gameLoop && !game.gameOver) {
+        game.start();
+        updateActionButton();
+      }
+      game.setKey(key, true);
+    });
+
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      game.setKey(key, false);
+    });
+
+    btn.addEventListener('touchcancel', (e) => {
+      game.setKey(key, false);
+    });
+  });
+
+  // Fire button
+  const fireBtn = windowEl.querySelector('.fire-btn');
+  if (fireBtn) {
+    fireBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (game.gameOver) {
+        game.restart();
+        updateActionButton();
+      } else if (!game.gameLoop) {
+        game.start();
+        updateActionButton();
+      } else {
+        game.shoot();
+      }
+    });
+  }
 
   // Menu handlers
   windowEl.querySelector('.new-game-btn').addEventListener('click', () => {
