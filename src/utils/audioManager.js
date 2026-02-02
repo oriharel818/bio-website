@@ -32,40 +32,36 @@ if (typeof document !== 'undefined') {
   document.addEventListener('keydown', initOnInteraction);
 }
 
-function playTone(frequency, duration, type = 'square', volume = 0.15) {
+export function playClick() {
   if (isMuted) return;
 
   try {
     const ctx = getAudioContext();
     if (ctx.state === 'suspended') {
       ctx.resume();
-      return; // Skip this sound, will work on next interaction
+      return;
     }
 
     const oscillator = ctx.createOscillator();
     const gainNode = ctx.createGain();
 
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(800, ctx.currentTime);
 
-    gainNode.gain.setValueAtTime(volume, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
 
     oscillator.connect(gainNode);
     gainNode.connect(ctx.destination);
 
     oscillator.start(ctx.currentTime);
-    oscillator.stop(ctx.currentTime + duration);
+    oscillator.stop(ctx.currentTime + 0.06);
   } catch (e) {
     // Audio not supported or blocked
   }
 }
 
-export function playClick() {
-  playTone(800, 0.06, 'square', 0.15);
-}
-
-export function playWindowOpen() {
+export function playStartup() {
   if (isMuted) return;
 
   try {
@@ -75,98 +71,31 @@ export function playWindowOpen() {
       return;
     }
 
-    // Ascending two-tone
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gain = ctx.createGain();
+    // Windows 98-style startup chime - ascending notes
+    const notes = [
+      { freq: 330, start: 0, duration: 0.15 },      // E4
+      { freq: 392, start: 0.12, duration: 0.15 },   // G4
+      { freq: 523, start: 0.24, duration: 0.15 },   // C5
+      { freq: 659, start: 0.36, duration: 0.3 },    // E5
+    ];
 
-    osc1.type = 'square';
-    osc2.type = 'square';
+    notes.forEach(note => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
 
-    osc1.frequency.setValueAtTime(400, ctx.currentTime);
-    osc2.frequency.setValueAtTime(600, ctx.currentTime + 0.08);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(note.freq, ctx.currentTime + note.start);
 
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0, ctx.currentTime + note.start);
+      gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + note.start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + note.start + note.duration);
 
-    osc1.connect(gain);
-    osc2.connect(gain);
-    gain.connect(ctx.destination);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
 
-    osc1.start(ctx.currentTime);
-    osc1.stop(ctx.currentTime + 0.08);
-    osc2.start(ctx.currentTime + 0.08);
-    osc2.stop(ctx.currentTime + 0.2);
-  } catch (e) {
-    // Audio not supported or blocked
-  }
-}
-
-export function playWindowClose() {
-  if (isMuted) return;
-
-  try {
-    const ctx = getAudioContext();
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-      return;
-    }
-
-    // Descending two-tone
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc1.type = 'square';
-    osc2.type = 'square';
-
-    osc1.frequency.setValueAtTime(600, ctx.currentTime);
-    osc2.frequency.setValueAtTime(400, ctx.currentTime + 0.08);
-
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-
-    osc1.connect(gain);
-    osc2.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc1.start(ctx.currentTime);
-    osc1.stop(ctx.currentTime + 0.08);
-    osc2.start(ctx.currentTime + 0.08);
-    osc2.stop(ctx.currentTime + 0.2);
-  } catch (e) {
-    // Audio not supported or blocked
-  }
-}
-
-export function playError() {
-  if (isMuted) return;
-
-  try {
-    const ctx = getAudioContext();
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-      return;
-    }
-
-    // Alert beep - two quick tones
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(440, ctx.currentTime);
-
-    gain.gain.setValueAtTime(0.2, ctx.currentTime);
-    gain.gain.setValueAtTime(0.2, ctx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0, ctx.currentTime + 0.12);
-    gain.gain.setValueAtTime(0.2, ctx.currentTime + 0.15);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime + note.start);
+      osc.stop(ctx.currentTime + note.start + note.duration);
+    });
   } catch (e) {
     // Audio not supported or blocked
   }

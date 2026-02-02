@@ -1,7 +1,6 @@
 // Window factory for creating 98-style windows
 import { makeDraggable } from '../utils/draggable.js';
 import { windowManager } from '../utils/windowManager.js';
-import { playWindowOpen, playWindowClose } from '../utils/audioManager.js';
 
 let windowCounter = 0;
 
@@ -54,9 +53,6 @@ export function createWindow(options) {
     windowElement.style.top = `${centerY}px`;
   }
 
-  // Play window open sound
-  playWindowOpen();
-
   windowElement.innerHTML = `
     <div class="title-bar">
       <div class="title-bar-text">
@@ -103,7 +99,6 @@ export function createWindow(options) {
       const shouldClose = onClose();
       if (shouldClose === false) return;
     }
-    playWindowClose();
     windowManager.close(id);
   });
 

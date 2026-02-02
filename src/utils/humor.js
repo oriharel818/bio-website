@@ -1,5 +1,4 @@
 // Error messages with dry humor
-import { playError } from './audioManager.js';
 export const errorMessages = {
   bioCloseTooFast: "Error: You haven't even read it yet. Rude.",
   snakeDeath: "Your snake has died. Just like my music career.",
@@ -40,7 +39,6 @@ export function getRandomQuip() {
 
 // Show an error dialog
 export function showErrorDialog(message, title = 'Error') {
-  playError();
   const overlay = document.createElement('div');
   overlay.className = 'dialog-overlay';
   overlay.innerHTML = `
