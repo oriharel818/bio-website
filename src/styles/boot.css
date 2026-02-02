@@ -220,3 +220,51 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(16, 132, 208, 0.4);
 }
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+@media (max-width: 768px) {
+  .ori-flag {
+    width: 70px;
+    height: 70px;
+    gap: 4px;
+  }
+
+  .ori-name {
+    font-size: 48px;
+    letter-spacing: -2px;
+  }
+
+  .ori-os {
+    font-size: 32px;
+  }
+
+  .boot-tagline {
+    font-size: 14px;
+    margin-bottom: 30px;
+  }
+
+  .progress-track {
+    width: 240px;
+  }
+
+  .boot-copyright {
+    font-size: 12px;
+  }
+
+  /* Shutdown screen */
+  .shutdown-box {
+    padding: 30px 40px;
+    margin: 16px;
+  }
+
+  .shutdown-safe {
+    font-size: 18px;
+  }
+
+  .ori-flag.small {
+    width: 40px;
+    height: 40px;
+  }
+}

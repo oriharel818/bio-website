@@ -199,3 +199,37 @@
 .start-menu-item.shutdown .menu-item-text {
   font-weight: bold;
 }
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+@media (max-width: 768px) {
+  .start-menu {
+    min-width: 180px;
+    max-height: calc(100vh - 50px);
+  }
+
+  .start-menu-item {
+    padding: 8px 16px 8px 8px;
+  }
+
+  .taskbar-window-btn {
+    max-width: 100px;
+    min-width: 60px;
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .taskbar-clock {
+    min-width: 50px;
+    font-size: 10px;
+  }
+
+  .system-tray {
+    padding: 2px;
+  }
+
+  .tray-icons {
+    gap: 2px;
+  }
+}

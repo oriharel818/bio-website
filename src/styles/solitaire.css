@@ -123,3 +123,41 @@
 .lives-display {
   color: #c00;
 }
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+@media (max-width: 768px) {
+  .solitaire-header {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .solitaire-instructions {
+    font-size: 10px;
+    padding: 6px;
+  }
+
+  .solitaire-canvas-container {
+    padding: 6px;
+  }
+
+  .asteroids-header {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .asteroids-instructions {
+    font-size: 10px;
+    padding: 6px;
+  }
+
+  .asteroids-canvas-container {
+    padding: 6px;
+  }
+
+  .asteroids-action-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}

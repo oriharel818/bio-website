@@ -382,6 +382,67 @@ html, body {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+@media (max-width: 768px) {
+  /* Simplify CRT frame on mobile - just show the screen */
+  #crt-monitor {
+    padding: 0;
+    background: #008080;
+  }
+
+  .crt-outer {
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    animation: none;
+  }
+
+  .crt-main {
+    padding: 0;
+  }
+
+  .crt-bezel {
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  .crt-bottom-panel,
+  .crt-stand,
+  .crt-base {
+    display: none;
+  }
+
+  .crt-screen {
+    min-width: 100%;
+    min-height: 100%;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+    animation: none;
+    box-shadow: none;
+  }
+
+  /* Hide CRT effects on mobile for performance */
+  .crt-scanlines,
+  .crt-screen::before {
+    display: none;
+  }
+
+  /* Smaller dialog on mobile */
+  .dialog-window {
+    min-width: 280px;
+    max-width: calc(100vw - 32px);
+    margin: 16px;
+  }
+}
+
 /* Adjust internal elements to be relative to crt-screen */
 #desktop,
 #windows-container,

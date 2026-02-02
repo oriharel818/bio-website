@@ -4,6 +4,11 @@ import { windowManager } from '../utils/windowManager.js';
 
 let windowCounter = 0;
 
+// Detect mobile devices
+function isMobile() {
+  return window.innerWidth <= 768;
+}
+
 export function createWindow(options) {
   const {
     id = `window-${++windowCounter}`,
@@ -93,34 +98,60 @@ export function createWindow(options) {
     windowManager.close(id);
   });
 
-  // Handle resize
-  if (resizable) {
+  // Handle resize (desktop only)
+  if (resizable && !isMobile()) {
     const resizeHandle = windowElement.querySelector('.resize-handle');
     let isResizing = false;
     let startWidth, startHeight, startX, startY;
 
-    resizeHandle.addEventListener('mousedown', (e) => {
+    function startResize(clientX, clientY) {
       isResizing = true;
       startWidth = windowElement.offsetWidth;
       startHeight = windowElement.offsetHeight;
-      startX = e.clientX;
-      startY = e.clientY;
+      startX = clientX;
+      startY = clientY;
+    }
+
+    function moveResize(clientX, clientY) {
+      if (!isResizing) return;
+
+      const newWidth = Math.max(200, startWidth + (clientX - startX));
+      const newHeight = Math.max(150, startHeight + (clientY - startY));
+
+      windowElement.style.width = `${newWidth}px`;
+      windowElement.style.height = `${newHeight}px`;
+    }
+
+    function endResize() {
+      isResizing = false;
+    }
+
+    // Mouse events
+    resizeHandle.addEventListener('mousedown', (e) => {
+      startResize(e.clientX, e.clientY);
       e.preventDefault();
     });
 
     document.addEventListener('mousemove', (e) => {
+      moveResize(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('mouseup', endResize);
+
+    // Touch events for resize
+    resizeHandle.addEventListener('touchstart', (e) => {
+      const touch = e.touches[0];
+      startResize(touch.clientX, touch.clientY);
+      e.preventDefault();
+    });
+
+    document.addEventListener('touchmove', (e) => {
       if (!isResizing) return;
+      const touch = e.touches[0];
+      moveResize(touch.clientX, touch.clientY);
+    }, { passive: true });
 
-      const newWidth = Math.max(200, startWidth + (e.clientX - startX));
-      const newHeight = Math.max(150, startHeight + (e.clientY - startY));
-
-      windowElement.style.width = `${newWidth}px`;
-      windowElement.style.height = `${newHeight}px`;
-    });
-
-    document.addEventListener('mouseup', () => {
-      isResizing = false;
-    });
+    document.addEventListener('touchend', endResize);
   }
 
   return windowElement;

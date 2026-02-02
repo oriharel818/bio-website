@@ -1037,3 +1037,147 @@
   color: #1084d0;
   background: rgba(16, 132, 208, 0.1);
 }
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+@media (max-width: 768px) {
+  /* Full-screen windows on mobile */
+  .window {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: calc(100% - 28px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    box-shadow: none;
+  }
+
+  .window.window-maximized {
+    height: calc(100% - 28px) !important;
+  }
+
+  /* Hide resize handle on mobile */
+  .resize-handle {
+    display: none;
+  }
+
+  /* Smaller bio header */
+  .bio-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .headshot-image,
+  .headshot-placeholder {
+    width: 80px;
+    height: 80px;
+  }
+
+  .bio-intro h2 {
+    font-size: 24px;
+  }
+
+  .tagline {
+    font-size: 15px;
+  }
+
+  /* Smaller notepad content padding */
+  .notepad-content {
+    padding: 16px;
+  }
+
+  .notepad-editor-container {
+    padding: 16px;
+  }
+
+  /* Bio story adjustments */
+  .bio-story h3 {
+    font-size: 20px;
+    margin: 28px 0 16px 0;
+  }
+
+  .bio-story p,
+  .bio-story li {
+    font-size: 14px;
+  }
+
+  .one-liner {
+    font-size: 16px;
+    padding: 16px 20px;
+    margin-top: 28px;
+  }
+
+  /* Explorer windows - stack detail view below */
+  .ventures-split-view {
+    flex-direction: column;
+  }
+
+  .ventures-list {
+    border-right: none;
+    border-bottom: 2px solid #808080;
+    max-height: 50%;
+  }
+
+  .venture-details {
+    width: 100%;
+    min-height: 200px;
+  }
+
+  .ventures-table th,
+  .ventures-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  /* Tree view adjustments */
+  .tree-view {
+    font-size: 13px;
+  }
+
+  .tree-books {
+    padding-left: 20px;
+  }
+
+  /* Folder icons grid */
+  .folder-icons-grid {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .folder-icon-item {
+    width: 75px;
+    padding: 8px 4px;
+  }
+
+  .folder-icon-image {
+    font-size: 32px;
+  }
+
+  .folder-icon-label {
+    font-size: 11px;
+  }
+
+  /* Education window */
+  .education-quote {
+    padding: 16px;
+  }
+
+  .quote-text {
+    font-size: 20px;
+  }
+
+  /* Snake game */
+  .snake-header {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .snake-instructions {
+    font-size: 11px;
+    padding: 8px;
+  }
+}
