@@ -297,7 +297,13 @@
 }
 
 .venture-row.selected,
-.venture-row.selected:hover {
+.venture-row.selected:hover,
+.venture-row.selected.current,
+.venture-row.selected.current:hover,
+.venture-row.selected.badge-failed,
+.venture-row.selected.badge-nice,
+.venture-row.selected.badge-meh,
+.venture-row.selected.badge-current {
   background: #000080;
   color: #ffffff;
 }
@@ -307,7 +313,7 @@
   background: #f0f8ff;
 }
 
-.venture-row.current:hover {
+.venture-row.current:hover:not(.selected) {
   background: #d8effc;
 }
 
@@ -790,19 +796,19 @@
   color: #f57c00;
 }
 
-.venture-row.badge-failed:hover {
+.venture-row.badge-failed:hover:not(.selected) {
   background: #fff5f5;
 }
 
-.venture-row.badge-meh:hover {
+.venture-row.badge-meh:hover:not(.selected) {
   background: #fffaf0;
 }
 
-.venture-row.badge-nice:hover {
+.venture-row.badge-nice:hover:not(.selected) {
   background: #f5fff5;
 }
 
-.venture-row.badge-current:hover {
+.venture-row.badge-current:hover:not(.selected) {
   background: #fffff0;
 }
 
