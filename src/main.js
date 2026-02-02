@@ -6,6 +6,7 @@ import { createTaskbar } from './components/Taskbar.js';
 import { openBioWindow } from './windows/BioWindow.js';
 import { showErrorDialog } from './utils/humor.js';
 import { initEasterEggs } from './effects/easterEggs.js';
+import { initFly } from './effects/fly.js';
 
 let isScreenOn = true;
 
@@ -27,6 +28,9 @@ function init() {
 
     // Initialize easter eggs
     initEasterEggs();
+
+    // Initialize fly easter egg (appears after 30 minutes)
+    initFly();
   });
 }
 

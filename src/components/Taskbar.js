@@ -3,6 +3,7 @@ import { windowManager } from '../utils/windowManager.js';
 import { createClock } from './Clock.js';
 import { showShutdownScreen } from './ShutdownScreen.js';
 import { desktopIcons } from './Desktop.js';
+import { playClick, toggleMute, getMuted } from '../utils/audioManager.js';
 
 export function createTaskbar() {
   const taskbar = document.getElementById('taskbar');
@@ -23,7 +24,7 @@ export function createTaskbar() {
     <div class="taskbar-windows"></div>
     <div class="system-tray">
       <div class="tray-icons">
-        <span class="tray-icon" title="Volume">🔊</span>
+        <span class="tray-icon volume-icon" title="Volume">🔊</span>
       </div>
       <div class="tray-divider"></div>
     </div>
@@ -32,9 +33,20 @@ export function createTaskbar() {
   const startButton = taskbar.querySelector('.start-button');
   const taskbarWindows = taskbar.querySelector('.taskbar-windows');
   const systemTray = taskbar.querySelector('.system-tray');
+  const volumeIcon = taskbar.querySelector('.volume-icon');
 
   // Add clock
   createClock(systemTray);
+
+  // Volume icon click handler
+  volumeIcon.addEventListener('click', () => {
+    const muted = toggleMute();
+    volumeIcon.textContent = muted ? '🔇' : '🔊';
+    volumeIcon.title = muted ? 'Sound Off' : 'Volume';
+    if (!muted) {
+      playClick(); // Play a click to confirm sound is on
+    }
+  });
 
   // Create start menu - append to CRT screen so it's clipped by overflow:hidden
   const startMenu = createStartMenu();
@@ -45,6 +57,7 @@ export function createTaskbar() {
 
   startButton.addEventListener('click', (e) => {
     e.stopPropagation();
+    playClick();
     startMenuOpen = !startMenuOpen;
     startMenu.classList.toggle('active', startMenuOpen);
     startButton.classList.toggle('active', startMenuOpen);
@@ -106,6 +119,8 @@ function createStartMenu() {
   menu.addEventListener('click', (e) => {
     const item = e.target.closest('.start-menu-item');
     if (!item) return;
+
+    playClick();
 
     const action = item.dataset.action;
     const id = item.dataset.id;

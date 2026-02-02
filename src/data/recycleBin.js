@@ -46,6 +46,7 @@ export const recycleBinItems = [
 - type "PARTY" (hold shift!) for disco mode
 - click the clock at exactly :00 seconds
 - konami code but backwards: A B right left right left down down up up
+- patience attracts flies
 
 shhh don't tell anyone`
   }

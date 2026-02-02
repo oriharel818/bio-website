@@ -1,6 +1,7 @@
 // Window factory for creating 98-style windows
 import { makeDraggable } from '../utils/draggable.js';
 import { windowManager } from '../utils/windowManager.js';
+import { playWindowOpen, playWindowClose } from '../utils/audioManager.js';
 
 let windowCounter = 0;
 
@@ -43,11 +44,18 @@ export function createWindow(options) {
     windowElement.style.top = `${y}px`;
   } else {
     // Center with slight offset based on counter
+    const container = document.getElementById('windows-container');
+    const containerRect = container ? container.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
     const offsetX = (windowCounter % 5) * 30;
     const offsetY = (windowCounter % 5) * 30;
-    windowElement.style.left = `calc(50% - ${width / 2}px + ${offsetX}px)`;
-    windowElement.style.top = `calc(50% - ${height / 2}px + ${offsetY}px - 50px)`;
+    const centerX = Math.max(0, (containerRect.width - width) / 2 + offsetX);
+    const centerY = Math.max(0, (containerRect.height - height) / 2 + offsetY - 50);
+    windowElement.style.left = `${centerX}px`;
+    windowElement.style.top = `${centerY}px`;
   }
+
+  // Play window open sound
+  playWindowOpen();
 
   windowElement.innerHTML = `
     <div class="title-bar">
@@ -95,6 +103,7 @@ export function createWindow(options) {
       const shouldClose = onClose();
       if (shouldClose === false) return;
     }
+    playWindowClose();
     windowManager.close(id);
   });
 
