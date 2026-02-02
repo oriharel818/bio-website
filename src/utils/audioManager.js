@@ -1,6 +1,7 @@
 // Audio Manager - Synthesized sounds via Web Audio API
 let audioContext = null;
 let isMuted = false;
+let isInitialized = false;
 
 function getAudioContext() {
   if (!audioContext) {
@@ -9,13 +10,36 @@ function getAudioContext() {
   return audioContext;
 }
 
-function playTone(frequency, duration, type = 'square', volume = 0.1) {
+// Initialize audio on first user interaction
+function initAudio() {
+  if (isInitialized) return;
+
+  const ctx = getAudioContext();
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
+  isInitialized = true;
+}
+
+// Set up listener for first user interaction
+if (typeof document !== 'undefined') {
+  const initOnInteraction = () => {
+    initAudio();
+    document.removeEventListener('click', initOnInteraction);
+    document.removeEventListener('keydown', initOnInteraction);
+  };
+  document.addEventListener('click', initOnInteraction);
+  document.addEventListener('keydown', initOnInteraction);
+}
+
+function playTone(frequency, duration, type = 'square', volume = 0.15) {
   if (isMuted) return;
 
   try {
     const ctx = getAudioContext();
     if (ctx.state === 'suspended') {
       ctx.resume();
+      return; // Skip this sound, will work on next interaction
     }
 
     const oscillator = ctx.createOscillator();
@@ -38,7 +62,7 @@ function playTone(frequency, duration, type = 'square', volume = 0.1) {
 }
 
 export function playClick() {
-  playTone(800, 0.05, 'square', 0.08);
+  playTone(800, 0.06, 'square', 0.15);
 }
 
 export function playWindowOpen() {
@@ -48,6 +72,7 @@ export function playWindowOpen() {
     const ctx = getAudioContext();
     if (ctx.state === 'suspended') {
       ctx.resume();
+      return;
     }
 
     // Ascending two-tone
@@ -61,7 +86,7 @@ export function playWindowOpen() {
     osc1.frequency.setValueAtTime(400, ctx.currentTime);
     osc2.frequency.setValueAtTime(600, ctx.currentTime + 0.08);
 
-    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
 
     osc1.connect(gain);
@@ -84,6 +109,7 @@ export function playWindowClose() {
     const ctx = getAudioContext();
     if (ctx.state === 'suspended') {
       ctx.resume();
+      return;
     }
 
     // Descending two-tone
@@ -97,7 +123,7 @@ export function playWindowClose() {
     osc1.frequency.setValueAtTime(600, ctx.currentTime);
     osc2.frequency.setValueAtTime(400, ctx.currentTime + 0.08);
 
-    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
 
     osc1.connect(gain);
@@ -120,6 +146,7 @@ export function playError() {
     const ctx = getAudioContext();
     if (ctx.state === 'suspended') {
       ctx.resume();
+      return;
     }
 
     // Alert beep - two quick tones
@@ -129,10 +156,10 @@ export function playError() {
     osc.type = 'square';
     osc.frequency.setValueAtTime(440, ctx.currentTime);
 
-    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-    gain.gain.setValueAtTime(0.1, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime + 0.1);
     gain.gain.setValueAtTime(0, ctx.currentTime + 0.12);
-    gain.gain.setValueAtTime(0.1, ctx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime + 0.15);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
 
     osc.connect(gain);
