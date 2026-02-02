@@ -451,10 +451,31 @@ html, body {
   }
 
   /* Smaller dialog on mobile */
+  .dialog-overlay {
+    padding: 16px;
+  }
+
   .dialog-window {
-    min-width: 280px;
+    min-width: auto;
     max-width: calc(100vw - 32px);
-    margin: 16px;
+    width: auto;
+  }
+
+  .dialog-body {
+    padding: 12px;
+  }
+
+  .dialog-icon {
+    font-size: 28px;
+  }
+
+  .dialog-content p {
+    font-size: 13px;
+  }
+
+  .dialog-buttons button {
+    min-width: 65px;
+    padding: 4px 12px;
   }
 }
 
